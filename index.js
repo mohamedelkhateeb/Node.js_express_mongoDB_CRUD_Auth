@@ -1,9 +1,9 @@
-const { Command } = require("commander");
-const program = new Command();
+const http = require("http");
 
-program
-	.name("first-node-app")
-	.version("0.0.1")
-	.description("i am a Mohamed and this is my firts nodejs CLI app");
+const server = http.createServer((req, res) => {
+	res.end("Hello World");
+});
 
-  program.parse(process.argv);
+server.listen(3000, () => {
+	console.log("Server is running on port 3000");
+});
