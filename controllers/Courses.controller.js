@@ -1,4 +1,5 @@
 const courses = require("../data/data");
+const { body, validationResult } = require("express-validator");
 
 const getAllCourses = (req, res) => {
 	res.json(courses);
