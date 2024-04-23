@@ -9,16 +9,16 @@ router.get("/", coursesController.getAllCourses);
 router.get("/:id", coursesController.getCourseById);
 router.post(
 	"/create",
-	body("name").notEmpty().withMessage("Course name is required"),
-	body("author").notEmpty().withMessage("author name is required"),
+	body("title").notEmpty().withMessage("Course title is required"),
+	body("author").notEmpty().withMessage("author title is required"),
 	body("price").notEmpty().withMessage("price is required"),
 	body("description").notEmpty().withMessage("description is required"),
 	coursesController.createCourse
 );
 router.put(
 	"/update/:id",
-	body("name").notEmpty().withMessage("Course name is required"),
-	body("author").notEmpty().withMessage("author name is required"),
+	body("title").notEmpty().withMessage("Course title is required"),
+	body("author").notEmpty().withMessage("author title is required"),
 	body("price").notEmpty().withMessage("price is required"),
 	body("description").notEmpty().withMessage("description is required"),
 	coursesController.updateCourse

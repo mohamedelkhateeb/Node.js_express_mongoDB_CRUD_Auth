@@ -1,7 +1,7 @@
 let courses = [
 	{
 		id: 1,
-		name: "Node js Course",
+		title: "Node js Course",
 		description: "Node js Course for beginners",
 		author: "Hassan",
 		published: true,
@@ -17,7 +17,7 @@ let courses = [
 	},
 	{
 		id: 2,
-		name: "React js Course",
+		title: "React js Course",
 		description: "React js Course for beginners",
 		author: "Hassan",
 		published: true,
@@ -33,7 +33,7 @@ let courses = [
 	},
 	{
 		id: 3,
-		name: "Angular js Course",
+		title: "Angular js Course",
 		description: "Angular js Course for beginners",
 		author: "Hassan",
 		published: true,

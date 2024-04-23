@@ -1,55 +1,66 @@
-const courses = require("../data/data");
+const coursesDB = require("../models/course.model");
 const { body, validationResult } = require("express-validator");
 
-const getAllCourses = (req, res) => {
+const getAllCourses = async (req, res) => {
+	const courses = await coursesDB.find();
+	console.log(courses);
 	res.json(courses);
 };
 
-const getCourseById = (req, res) => {
+const getCourseById = async (req, res) => {
 	const { id } = req.params;
-	let course = courses.find((c) => id == c.id);
-	if (!course) {
-		return res.status(404).json({ Msg: "Course not found" });
+
+	try {
+		const course = await coursesDB.findById(id);
+		if (!course) {
+			return res.status(404).json({ Msg: "Course not found" });
+		}
+		res.send(course);
+	} catch (error) {
+		return res.status(404).json({ Msg: "Invalid Object ID" });
 	}
-	res.send(course);
 };
 
-const createCourse = (req, res) => {
+const createCourse = async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
 	}
-	courses.push({ id: courses.length + 1, ...req.body });
-	res.status(201).json(req.body);
+	const newCourse = new coursesDB(req.body);
+	await newCourse.save();
+	res.status(201).json(newCourse);
 };
 
-const updateCourse = (req, res) => {
-	(req, res) => {
-		const { id } = req.params;
-		let course = courses.find((c) => id == c.id);
-		if (!course) {
+const updateCourse = async (req, res) => {
+	const { id } = req.params;
+	try {
+		let updatedCourse = await coursesDB.findByIdAndUpdate(id, {
+			$set: { ...req.body },
+		});
+		if (!updatedCourse) {
 			return res.status(404).send("Course not found");
 		}
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
 		}
-
-		courses = courses.reduce((c) => (c.id == id ? course : c));
-		course = { ...course, ...req.body };
-		res.status(201).json(course);
-	};
+		res.status(202).json(updatedCourse);
+	} catch (error) {
+		return res.status(404).send("Invalid Object ID");
+	}
 };
 
-const deleteCourse = (req, res) => {
+const deleteCourse = async (req, res) => {
 	const { id } = req.params;
-	const course = courses.find((c) => id == c.id);
-	console.log(course);
-	if (!course) {
-		return res.status(404).send("Course not found");
+	try {
+		const course = await coursesDB.findByIdAndDelete(id);
+		if (!course) {
+			return res.status(404).send({ MSG: "Course not found" });
+		}
+		res.json({ MSG: "Course deleted successfully" });
+	} catch (error) {
+		res.status(404).json({ MSG: "Invalid Object ID" });
 	}
-	courses = courses.filter((c) => id != c.id);
-	res.json({ MSG: "Course deleted successfully" });
 };
 
 module.exports = {
