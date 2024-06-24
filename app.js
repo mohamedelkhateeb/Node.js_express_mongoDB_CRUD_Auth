@@ -1,16 +1,20 @@
 const express = require("express");
+require("dotenv").config();
+const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 
-const port = 5000;
-const url =
-	"mongodb+srv://mokhateeb74:h0VVKbJTcPf6Ii4E@cluster0.rzujb9b.mongodb.net/TasksDB?retryWrites=true&w=majority&appName=Cluster0";
-const routes = require("./routes/courses.routes");
-
+const port = process.env.PORT || 3000;
+const url = process.env.MONGODB_URL;
+console.log({ url });
+const coursesRouter = require("./routes/courses.routes");
+const usersRouter = require("./routes/users.routes");
+app.use(cors());
 mongoose.connect(url).then(() => console.log("Connected to MongoDB"));
 
 app.use(express.json());
-app.use("/api/courses", routes);
+app.use("/api/courses", coursesRouter);
+app.use("/api/users", usersRouter);
 
 //start server
 app.listen(port, () => console.log("Listening on port " + port));
