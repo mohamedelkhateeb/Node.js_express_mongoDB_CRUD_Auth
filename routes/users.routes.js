@@ -1,10 +1,10 @@
 const express = require("express");
-const varifyToken = require("../middleware/varifyToken");
+const verifyASPToken = require("../middleware/varifyASPToken");
 
 const router = express.Router();
 
 const usersController = require("../controllers/Users.controller");
-router.get("/", varifyToken, usersController.getAllUsers);
+router.get("/", verifyASPToken, usersController.getAllUsers);
 router.post("/register", usersController.register);
 router.post("/login", usersController.login);
 
