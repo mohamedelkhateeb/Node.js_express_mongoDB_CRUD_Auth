@@ -1,35 +1,50 @@
 const usersDB = require("../models/User.model");
 const bcrypt = require("bcryptjs");
 const generateJWT = require("../utils/generateJWT");
+const UserModel = require("../models/User.model");
 
 const getAllUsers = async (req, res) => {
-  const users = await usersDB.find({}, { password: false, __v: false });
-  console.log(users);
-  res.json(users);
+  try {
+    const users = await UserModel.find().populate(
+      "courses",
+      "title description price"
+    ); // Populate courses
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
 };
-
 const login = async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
-    return res.status(400).json("Email and password are required");
-  }
-  const user = await usersDB.findOne({ email });
-  if (!user) {
-    return res.status(400).json("Invalid credentials");
+    return res.status(400).json({ message: "Email and password are required" });
   }
 
-  const matchedPass = await bcrypt.compare(password, user.password);
-
-  const accessToken = await generateJWT({ email: user.email, id: user._id });
-  user.Token = accessToken;
-
-  if (matchedPass && user) {
-    return res.status(200).json(user);
-  } else {
-    return res.status(400).json("Invalid credentials");
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+    const matchedPass = await bcrypt.compare(password, user.password);
+    if (!matchedPass) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+    const accessToken = await generateJWT({ email: user.email, id: user._id });
+    user.Token = accessToken; // Optional: If you want to store the token in DB
+    await user.save();
+    const { password: _, ...userData } = user.toObject(); // Exclude password from response
+    return res.status(200).json({
+      message: "Login successful",
+      user: userData,
+      token: accessToken,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Server Error", error: err.message });
   }
 };
-
 const register = async (req, res) => {
   const { email, password, fName, lName } = req.body;
   const isExistingUser = await usersDB.findOne({ email });

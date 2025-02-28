@@ -22,15 +22,16 @@ const url = process.env.MONGODB_URL;
 
 const coursesRouter = require("./routes/courses.routes");
 const usersRouter = require("./routes/users.routes");
+const verifyToken = require("./middleware/varifyToken");
 
 app.use(cors());
 mongoose.connect(url).then(() => console.log("Connected to MongoDB"));
 
 app.use(express.json());
-app.use("/api/courses", coursesRouter);
+app.use("/api/courses", verifyToken, coursesRouter);
 app.use("/api/users", usersRouter);
 
-app.get("/", verifyASPToken, (req, res) => {
+app.get("/", verifyToken, (req, res) => {
   res.send("Hello World!");
 });
 app.get("/api/socket", (req, res) => {

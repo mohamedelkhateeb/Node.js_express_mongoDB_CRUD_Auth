@@ -4,7 +4,7 @@ const verifyASPToken = require("../middleware/varifyASPToken");
 const router = express.Router();
 
 const usersController = require("../controllers/Users.controller");
-router.get("/", verifyASPToken, usersController.getAllUsers);
+router.get("/", usersController.getAllUsers);
 router.post("/register", usersController.register);
 router.post("/login", usersController.login);
 

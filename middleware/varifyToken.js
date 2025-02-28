@@ -13,6 +13,8 @@ const verifyToken = (req, res, next) => {
     try {
 
         const currentUser = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        console.log(currentUser);
+        
         req.currentUser = currentUser;
         next();
 
