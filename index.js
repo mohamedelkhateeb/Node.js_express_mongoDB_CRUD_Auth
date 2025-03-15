@@ -1,7 +1,6 @@
 const express = require("express");
 require("dotenv").config();
 const { connectMongoClient, watchCollection } = require("./utils/mongoClient");
-const verifyASPToken = require("./middleware/varifyASPToken");
 const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
@@ -31,7 +30,7 @@ app.use(express.json());
 app.use("/api/courses", verifyToken, coursesRouter);
 app.use("/api/users", usersRouter);
 
-app.get("/", verifyToken, (req, res) => {
+app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 app.get("/api/socket", (req, res) => {

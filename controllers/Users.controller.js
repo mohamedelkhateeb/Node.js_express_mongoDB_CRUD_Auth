@@ -30,6 +30,9 @@ const login = async (req, res) => {
     if (!matchedPass) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+
+
+    
     const accessToken = await generateJWT({ email: user.email, id: user._id });
     user.Token = accessToken; // Optional: If you want to store the token in DB
     await user.save();
